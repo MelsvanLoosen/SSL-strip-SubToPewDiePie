@@ -65,9 +65,9 @@ def stripHTTPS(url, request):
     newURL = request2.replace("HTTPS", "HTTP")
     newURL2 = newURL.replace("https", "http")
 
-    newURL3 = newURL2.replace('href="http:', 'href="')
-    newURL4 = newURL3.replace('src="http:', 'src="')
-    newURL4 = newURL4.replace('content="http:', 'content="')
+    newURL3 = newURL2.replace("//s.", "https://s.")
+    newURL4 = newURL3.replace('href="//s', 'href="https:s')
+
 
     response._content = newURL4.encode('utf-8')
 
@@ -80,12 +80,8 @@ def stripHTTPS(url, request):
 
     return response
 
-def stripSecureCookie(response):
-    session = requests.Session()
+
     
-    print session.cookie
-    newCookie = cookie.replace("Secure;", "")
-    response.cookies = newCookie
 
 class sslStripping(object):
     @cherrypy.expose
@@ -95,8 +91,29 @@ class sslStripping(object):
             
         print url
 
-
-        url = str(url).replace("http", "https")
+        if ".js" in url:
+    	    print ".js"
+     	    r = requests.get(url, verify=False)
+    	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
+    	    print "testttttt"
+    	    print r.headers
+    	    return r.content
+        elif ".css" in url:
+    	    print ".css"
+    	    r = requests.get(url, verify=False)
+     	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
+    	    print "cssstestt"
+    	    print r.headers
+    	    return r.content
+        elif ".woff2" in url:
+            print ".woff2"
+            r = requests.put(url)
+            r.headers.update({'Access-Control-Allow-Origin' : '*'})
+            print ".woffteset"
+            print r.headers
+            return r.content
+        else:
+            url = str(url).replace("http", "https")
         
         response = requests.get(url, verify=False)
 
@@ -114,8 +131,8 @@ class sslStripping(object):
 
         response2 = stripHTTPS(url, response)
 
-        response3 = stripSecureCookie(response2)
-        print response3
+        #response3 = stripSecureCookie(response2)
+        print response2
         return response2.content
 
 
