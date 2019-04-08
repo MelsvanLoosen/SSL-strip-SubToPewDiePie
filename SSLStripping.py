@@ -41,7 +41,7 @@ def stripHTTPS(url, request):
 
     response._content = newURL4.encode('utf-8')
 
-    response.headers = request.headers
+    response.headers = stripSecureCookie(request)
     response.history = request.history
     response.encoding = request.encoding
     response.reason = request.reason
@@ -50,7 +50,15 @@ def stripHTTPS(url, request):
 
     return response
 
+def stripSecureCookie(response):
 
+    header = response.headers
+
+    setCookie = header.get("Set-Cookie")
+
+    newHeader = str(setCookie).replace(" Secure;", "")
+
+    return newHeader
 
 class sslStripping(object):
     @cherrypy.expose
