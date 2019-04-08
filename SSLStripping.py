@@ -66,17 +66,17 @@ class sslStripping(object):
 
         if "GET" in method:
             if ".js" in url:
-        	    print ".js"
-         	    r = requests.get(url, verify=False)
-        	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
-        	    print r.headers
-        	    return r.content
+                print ".js"
+                r = requests.get(url, verify=False)
+                r.headers.update({'Access-Control-Allow-Origin' : '*'})
+                print r.headers
+                return r.content
             elif ".css" in url:
-        	    print ".css"
-        	    r = requests.get(url, verify=False)
-         	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
-        	    print r.headers
-        	    return r.content
+                print ".css"
+                r = requests.get(url, verify=False)
+                r.headers.update({'Access-Control-Allow-Origin' : '*'})
+                print r.headers
+                return r.content
             elif ".woff2" in url:
                 print ".woff2"
                 r = requests.put(url)
