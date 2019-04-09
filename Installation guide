@@ -1,19 +1,19 @@
-The SSL stripping tool can only be run on a linux machine and therefore the installation of linux version is needed. 
+The SSL stripping tool can only be run on a linux machine and therefore the installation of linux machine is needed. 
 In the development phase, we have used Linux Mint 64-bit as our operating system. 
 To get the best performing tool, we recommend to use the same OS but other linux versions should also work fine. 
-Also make sure that the OS is able to make an internet connection.
+Also make sure that the OS is able to make an internet connection, by putting the network settings on bridged network.
 
 The tool can be downloaded or cloned at :
 https://github.com/MelsvanLoosen/SSL-strip-SubToPewDiePie
 
-For this tool to work a few modules have to be installed which can be done via pip.
+For this tool to work a few modules have to be installed which can be done via pip. 
 If pip isn’t yet installed on your linux machine use the following link to correctly install pip on your linux device:
 
-> https://pip.pypa.io/en/stable/installing/
+https://pip.pypa.io/en/stable/installing/
 
 To install the needed modules, type the following commands in a terminal in your linux environment.
 
 > sudo pip install requests
 > sudo pip install cherrypy
 
-Now everything is installed and we can start SSL stripping, see the readme for more information on how the tool works
+Now that everything is installed we can start SSL stripping, see the readme file for information on that.
