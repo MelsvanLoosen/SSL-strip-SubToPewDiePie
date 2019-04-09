@@ -1,1 +1,1 @@
-# SSL-strip-SubToPewDiePie
+# SSL-stripping including secure cookie stripping
