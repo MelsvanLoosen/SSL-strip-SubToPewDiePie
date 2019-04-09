@@ -27,4 +27,4 @@ Lastly the tool will ask:
 
 >What is your network interface?
 
-Here you need to give the network interface you are currently conneccted to via the internet, this can also be found by using the ifconfig command in a terminal and looking at which network interface you are currently using (typically of type: eth0, enp0s3 or enp0s8).
+Here you need to give the network interface you are currently connected to via the internet, this can also be found by using the ifconfig command in a terminal and looking at which network interface you are currently using (typically of type: eth0, enp0s3 or enp0s8).
