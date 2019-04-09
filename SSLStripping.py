@@ -28,7 +28,6 @@ def stripHTTPS(url, request):
     response.status_code = 200
     response.url = url
 
-    #print response.url
     request2 = request.text
 
     #Start replacing all instances of HTTPS with HTTP and some CSS fixing
@@ -57,7 +56,9 @@ def stripSecureCookie(response):
     setCookie = header.get("Set-Cookie")
 
     newHeader = str(setCookie).replace(" Secure;", "")
-
+    
+    print newHeader
+    
     return newHeader
 
 class sslStripping(object):
@@ -96,7 +97,7 @@ class sslStripping(object):
             else:
                 url = str(url).replace("http", "https")
 
-            response = requests.get(url, cookies=cookie, verify=False)
+            response = requests.get(url, verify=False)
             cookies = cherrypy.response.cookie
             print cookies
 
@@ -110,7 +111,7 @@ class sslStripping(object):
 
             response2 = stripHTTPS(url, response)
 
-            print response2
+            
             return response2.content
 
         else:
