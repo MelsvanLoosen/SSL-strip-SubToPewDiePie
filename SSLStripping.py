@@ -57,7 +57,7 @@ def stripSecureCookie(response):
 
     newHeader = str(setCookie).replace(" Secure;", "")
     
-    print newHeader
+    print "Stripped cookie header :" + newHeader
     
     return newHeader
 
@@ -72,24 +72,19 @@ class sslStripping(object):
         print params
         print "-----------"
         #cookie.clear()
-        print cookie
-        print url
+        print "original cookies :" + cookie
+        print "original url :" + url
 
         if "GET" in method:
             if ".js" in url:
-        	    print ".js"
          	    r = requests.get(url, verify=False)
         	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
-        	    print r.headers
         	    return r.content
             elif ".css" in url:
-        	    print ".css"
         	    r = requests.get(url, verify=False)
          	    r.headers.update({'Access-Control-Allow-Origin' : '*'})
-        	    print r.headers
         	    return r.content
             elif ".woff2" in url:
-                print ".woff2"
                 r = requests.put(url)
                 r.headers.update({'Access-Control-Allow-Origin' : '*'})
                 print r.headers
@@ -99,15 +94,15 @@ class sslStripping(object):
 
             response = requests.get(url, verify=False)
             cookies = cherrypy.response.cookie
-            print cookies
+            print "Response cookies cherrypy :" + cookies
 
             # return nothing if hte encoding is none (images)
             if(str(response.encoding) == "None"):
                 return response.content
 
-            print response.cookies
+            print "Response cookies of server :" + response.cookies
             print "----------------------------------------------------"
-            print response.headers
+            print "Response header of server :" + response.headers
 
             response2 = stripHTTPS(url, response)
 
@@ -118,7 +113,7 @@ class sslStripping(object):
             print params
             url = str(url).replace("http", "https")
             response = requests.post(url, data = params)
-            print response.headers
+            print "Response header of server :" + response.headers
             response2 = stripHTTPS(url, response)
             return response2.content
 
