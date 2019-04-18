@@ -7,7 +7,7 @@ In the terminal type:
 
 > sudo python main.py
 
-Now the programming is running and the stripping can start.
+Now the program is running and the stripping can start.
 
 The tool will then ask:
 
